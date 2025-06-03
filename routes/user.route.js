@@ -1,5 +1,5 @@
 import express from "express"   
-import { SaveUser,GetAllUsers,GetUsersById,GetUserByEmail,DeleteUserById } from "../controller/user.controller.js";
+import { SaveUser,GetAllUsers,GetUsersById,GetUserByEmail,DeleteUserById,verifyOTP,sendOTP,ResetPassword } from "../controller/user.controller.js";
 
 const route =express.Router()
 
@@ -13,5 +13,12 @@ route.post("/getuserbyemail", GetUserByEmail)
 
 route.delete("/deleteuserbyid", DeleteUserById)
 
+route.post("/sendotp", sendOTP)
 
+route.post("/verifyotp", verifyOTP)
+
+
+route.post("/resetpassword", ResetPassword)
+
+//U2FsdGVkX19Du6735IFLSk+yhuE17hMsjf6sZomp6e8=
 export default route;
