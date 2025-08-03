@@ -7,9 +7,9 @@ route.get("/" , GetAllUsers);
 
 route.post("/" , SaveUser);
 
-route.get("/getbyid",GetUsersById)
+route.get("/:id",GetUsersById)
 
-route.post("/getuserbyemail", GetUserByEmail)
+route.get("/:email", GetUserByEmail)
 
 route.delete("/deleteuserbyid", DeleteUserById)
 
@@ -17,8 +17,6 @@ route.post("/sendotp", sendOTP)
 
 route.post("/verifyotp", verifyOTP)
 
-
 route.post("/resetpassword", ResetPassword)
 
-//U2FsdGVkX19Du6735IFLSk+yhuE17hMsjf6sZomp6e8=
 export default route;

@@ -3,16 +3,11 @@ import {AllProductList,AddProduct,GetProductById,UpdateQuantityByOrder,UpdateQua
 
 const route = express.Router()
 
-// app.get("/product", async (req,res)=>{
-//   const data = await Product.find({})
-//   res.json(data)
-// })
-
 route.get("/", AllProductList)
 
 route.post("/",AddProduct)
 
-route.get("/getproductbyid",GetProductById)
+route.get("/:id",GetProductById)
 
 route.patch("/UpdateQuantityByOrder",UpdateQuantityByOrder)
 

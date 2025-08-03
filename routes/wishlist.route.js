@@ -7,7 +7,7 @@ route.get("/", GetAllWishlist)
 
 route.post("/", SaveWishlist)
 
-route.post("/byId",GetWishlistById)
+route.get("/:id",GetWishlistById)
 
 route.delete("/unsaveWishlist",unSaveWishlist)
 

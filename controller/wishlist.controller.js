@@ -36,9 +36,15 @@ export async function unSaveWishlist(req ,res) {
 
 
 export async function GetWishlistById(req ,res) {
-    const {_id}= req.body;
-    const UsersDetail=await wishlists.find({user_id:_id})
-    res.json(UsersDetail)
+    const _id= req.params.id;
+    try{
+      const UsersDetail=await wishlists.find({user_id:_id})
+      res.status(200).json(UsersDetail)
+    }
+    catch(err){
+      console.log(err)
+      res.status(500).json(err);
+    }
 }
 
 export async function GetAllWishlist(req ,res) {

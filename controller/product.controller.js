@@ -22,9 +22,14 @@ export async function AddProduct(req ,res) {
 }
 
 export async function GetProductById(req ,res) {
-  const {_id}= req.body;
-  const productDetail=await Products.findById(_id)
-  res.json(productDetail)
+  const _id= req.params.id;
+  try {
+    const productDetail=await Products.findById(_id)
+    res.status(200).json(productDetail)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+  
 }
 
 export async function UpdateQuantityByOrder(req ,res) {
