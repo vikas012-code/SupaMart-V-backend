@@ -18,9 +18,14 @@ export async function SaveOrder(req ,res) {
 }
 
 export async function GetOrdersById(req ,res) {
-    const {_id}= req.body;
-    const UsersDetail=await orders.find({user_id:_id})
-    res.json(UsersDetail)
+    const _id= req.params.id;
+    try {
+      const UsersDetail=await orders.find({user_id:_id})
+      res.status(200).json(UsersDetail)
+    } catch (error) {
+      res.status(500).json(error)
+    }
+    
 }
 
 export async function GetAllOrder(req ,res) {

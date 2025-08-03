@@ -3,40 +3,33 @@ import Users from "../models/users.model.js";
 import nodemailer from 'nodemailer';
 import crypto from 'node:crypto';
 
-// export async function SaveUser(req ,res) {
-//     console.log("/user connected...")
-
-//   const req_Data = req.body;
-
-//   const data = new Users(req_Data);
-  
-//   try{
-//     const result = await data.save();
-//     console.log(data)
-//     res.status(200).send(data);
-//   }
-//   catch(err){
-//     console.log(err)
-//     res.status(500).json(err);
-//   }
-    
-// }
-
 export async function GetAllUsers(req ,res) {
     const AllUsers=await Users.find({})
     res.json(AllUsers)
 }
 
 export async function GetUsersById(req ,res) {
-  const {_id}= req.body;
-  const UsersDetail=await Users.findById(_id)
-  res.json(UsersDetail)
+  const _id= req.params.id;
+  try{
+        const UsersDetail=await Users.findById(_id)
+        res.status(200).json(UsersDetail)
+    }
+    catch(err){
+      console.log(err)
+      res.status(500).json(err);
+    }
 }
 
 export async function GetUserByEmail(req ,res) {
-  const {email }= req.body;
-  const UsersDetail=await Users.find({email:email})
-  res.json(UsersDetail)
+  const email = req.params.email;
+   try{
+        const UsersDetail=await Users.find({email:email})
+        res.status(200).json(UsersDetail)
+    }
+    catch(err){
+      console.log(err)
+      res.status(500).json(err);
+    }
 }
 
 export async function DeleteUserById(req ,res) {
@@ -51,9 +44,6 @@ export async function DeleteUserById(req ,res) {
       res.status(500).json(err);
     }
 }
-
-
-
 
 
 // Email Transporter Setup
