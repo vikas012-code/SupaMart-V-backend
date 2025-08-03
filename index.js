@@ -16,7 +16,6 @@ DB_Connection();
 
 app.use(express.json())
  
-
 app.get("/",(req, res) => {
   console.log("index connected...")
   res.send({ message: "Hello!!!"});
@@ -30,12 +29,8 @@ app.use("/wishlists",wishlistsRoutes)
 
 app.use("/orders",orderRoutes)
 
-
-
-
 app.listen(process.env.PORT, () => {
   
   console.log("server is running",process.env.PORT);
 
 });
-
