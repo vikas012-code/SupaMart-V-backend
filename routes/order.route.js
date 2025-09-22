@@ -7,7 +7,7 @@ route.get("/", GetAllOrder)
 
 route.post("/", SaveOrder)
 
-route.get("/:id",GetOrdersById)
+route.get("/OrderById/:id",GetOrdersById)
 
 route.get("/recentOrder",GetRecentOrder)
 
