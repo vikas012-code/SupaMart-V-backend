@@ -33,13 +33,15 @@ export async function GetAllOrder(req ,res) {
     res.json(AllOrdersdata)
 }
 
-const todayStart = new Date();
-todayStart.setHours(0, 0, 0, 0);
 
-const todayEnd = new Date();
-todayEnd.setHours(23, 59, 59, 999);
 
 export async function GetRecentOrder(req ,res) {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+
   const recentOrder=await orders.find({
     createdAt: {
       $gte: todayStart,
