@@ -9,7 +9,7 @@ route.post("/" , SaveUser);
 
 route.get("/:id",GetUsersById)
 
-route.get("/:email", GetUserByEmail)
+route.get("/verify/:email", GetUserByEmail)
 
 route.delete("/deleteuserbyid", DeleteUserById)
 
