@@ -62,3 +62,30 @@ export async function UpdateQuantityByAdding(req ,res) {
     console.error('Error ', err);
   }
 }
+
+
+export async function UploadImage (req , res){
+  //Configuration
+    cloudinary.config({ 
+        cloud_name: process.env.cloud_name, 
+        api_key: process.env.api_key, 
+        api_secret: process.env.api_secret
+    });
+
+    // console.log(req,req.body,req.files)
+    
+    // Upload an image
+    try{
+      //console.log(req.files.files)
+      const file=req.files.files
+      const uploadResult = await cloudinary.uploader.upload(file.tempFilePath ,(err,result)=>{
+        console.log(result)
+        
+      })
+      res.status(200).json(uploadResult.url);
+    }
+   catch (error) {
+      console.error(error);
+      res.status(400).json(error,req);
+    }
+}
