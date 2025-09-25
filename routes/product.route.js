@@ -1,11 +1,13 @@
 import express from "express";
-import {AllProductList,AddProduct,GetProductById,UpdateQuantityByOrder,UpdateQuantityByAdding} from "../controller/product.controller.js"
+import {AllProductList,AddProduct,GetProductById,UpdateQuantityByOrder,UpdateQuantityByAdding,UploadImage} from "../controller/product.controller.js"
 
 const route = express.Router()
 
 route.get("/", AllProductList)
 
 route.post("/",AddProduct)
+
+route.post("/uploadimage",UploadImage)
 
 route.get("/:id",GetProductById)
 
