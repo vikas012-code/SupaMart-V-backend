@@ -1,4 +1,5 @@
 import Products from "../models/products.model.js"
+import { v2 as cloudinary } from 'cloudinary';
 
 export async function AllProductList(req,res) {
     const data = await Products.find({})
