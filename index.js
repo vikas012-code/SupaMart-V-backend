@@ -1,6 +1,7 @@
 import DB_Connection from "./DB_Connection.js";
 import express, { json } from "express";
 import cors from "cors"
+import fileUpload from "express-fileupload";
 
 import userRoutes from "./routes/user.route.js"
 import productRoutes from "./routes/product.route.js"
@@ -10,6 +11,10 @@ import orderRoutes from "./routes/order.route.js"
 const app = express();
 
 app.use(cors())
+
+app.use(fileUpload({
+  useTempFiles:true
+}))
 
 DB_Connection();
 
