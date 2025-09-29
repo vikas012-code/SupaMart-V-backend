@@ -79,6 +79,7 @@ export async  function SaveUser (req, res) {
 export async function sendOTP (req, res) {
     try {
         const { email } = req.body;
+        console.log("otp req from ",email)
         const user = await Users.findOne({ email });
 
         if (!user) return res.status(400).json({ message: 'User not found' });
