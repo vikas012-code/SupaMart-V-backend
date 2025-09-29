@@ -80,15 +80,19 @@ export async function sendOTP (req, res) {
     try {
         const { email } = req.body;
         console.log("otp req from ",email)
+
         const user = await Users.findOne({ email });
 
         if (!user) return res.status(400).json({ message: 'User not found' });
 
+        console.log("User found ")
         const otp = generateOTP();
         user.otp = otp;
         user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+         console.log("OTP generated ", otp)
         await user.save();
 
+        console.log("saved OTP in user")
         await transporter.sendMail({
             from:process.env.NodeMailer_Gmail ,
             to: email,
@@ -96,7 +100,8 @@ export async function sendOTP (req, res) {
             text: `Your new OTP is: ${otp}`
         });
 
-        res.json({ message: 'OTP resent successfully.' });
+        console.log("sent otp to user ")
+        res.status(200).json({ message: 'OTP resent successfully.' });
     } catch (error) {
         res.status(500).json({ message: 'Error resending OTP', error });
     }
