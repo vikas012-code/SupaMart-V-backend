@@ -99,7 +99,7 @@ export async function sendOTP (req, res) {
             } catch (err) {
             console.error("FULL ERROR:", err);
             console.error("ERR TEXT:", err?.response?.toString?.());
-            throw err;
+            res.status(500).json({error:err})
             }
 
         res.status(200).json({ message: 'OTP resent successfully.' });
