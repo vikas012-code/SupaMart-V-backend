@@ -2,6 +2,43 @@ import Users from "../models/users.model.js";
 
 import nodemailer from 'nodemailer';
 import crypto from 'node:crypto';
+// import { google } from "googleapis";
+
+// const {
+//   GOOGLE_CLIENT_ID,
+//   GOOGLE_CLIENT_SECRET,
+//   GOOGLE_REFRESH_TOKEN,
+//   GOOGLE_USER_EMAIL,
+// } = process.env;
+
+// const oAuth2Client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
+// oAuth2Client.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
+
+// async function sendMail({ to, subject, text}) {
+//   const accessTokenObj = await oAuth2Client.getAccessToken();
+//   const accessToken = accessTokenObj?.token;
+
+//   const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: {
+//       type: "OAuth2",
+//       user: GOOGLE_USER_EMAIL,
+//       clientId: GOOGLE_CLIENT_ID,
+//       clientSecret: GOOGLE_CLIENT_SECRET,
+//       refreshToken: GOOGLE_REFRESH_TOKEN,
+//       accessToken,
+//     },
+//   });
+
+//   const info = await transporter.sendMail({
+//     from: GOOGLE_USER_EMAIL,
+//     to,
+//     subject,
+//     text,
+//   });
+
+//   return info;
+// }
 
 export async function GetAllUsers(req ,res) {
     const AllUsers=await Users.find({})
@@ -48,11 +85,15 @@ export async function DeleteUserById(req ,res) {
 
 // Email Transporter Setup
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // true for 465
     auth: {
-        user: process.env.NodeMailer_Gmail,
-        pass: process.env.NodeMailer_Password
-    }
+        user: process.env.NodeMailer_Gmail, // your@gmail.com
+        pass: process.env.NodeMailer_Password, // <- app password here
+    },
+
 });
 
 // Generate OTP
@@ -96,6 +137,8 @@ export async function sendOTP (req, res) {
             subject: 'Resend OTP Verification',
             text: `Your new OTP is: ${otp}`
             });
+
+            // await sendMail({to:email,subject: 'Resend OTP Verification',text: `Your new OTP is: ${otp}`})
             } catch (err) {
             console.error("FULL ERROR:", err);
             console.error("ERR TEXT:", err?.response?.toString?.());
