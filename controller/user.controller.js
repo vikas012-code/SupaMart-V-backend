@@ -87,11 +87,11 @@ export async function DeleteUserById(req ,res) {
 const transporter = nodemailer.createTransport({
 
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // true for 465
+    port: 587,
+    secure: true,
     auth: {
-        user: process.env.NodeMailer_Gmail, // your@gmail.com
-        pass: process.env.NodeMailer_Password, // <- app password here
+        user: process.env.NodeMailer_Gmail,
+        pass: process.env.NodeMailer_Password,
     },
 
 });
