@@ -2,43 +2,51 @@ import Users from "../models/users.model.js";
 
 import nodemailer from 'nodemailer';
 import crypto from 'node:crypto';
-// import { google } from "googleapis";
+import { google } from "googleapis";
 
-// const {
-//   GOOGLE_CLIENT_ID,
-//   GOOGLE_CLIENT_SECRET,
-//   GOOGLE_REFRESH_TOKEN,
-//   GOOGLE_USER_EMAIL,
-// } = process.env;
+const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REFRESH_TOKEN,
+  GOOGLE_USER_EMAIL,
+} = process.env;
 
-// const oAuth2Client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
-// oAuth2Client.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
+async function sendMail(to, otp) {
+    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !GOOGLE_REFRESH_TOKEN || !GOOGLE_USER_EMAIL) {
+  throw new Error("Missing Gmail OAuth2 env vars");
+}
 
-// async function sendMail({ to, subject, text}) {
-//   const accessTokenObj = await oAuth2Client.getAccessToken();
-//   const accessToken = accessTokenObj?.token;
+const oAuth2Client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
+oAuth2Client.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
 
-//   const transporter = nodemailer.createTransport({
-//     service: "gmail",
-//     auth: {
-//       type: "OAuth2",
-//       user: GOOGLE_USER_EMAIL,
-//       clientId: GOOGLE_CLIENT_ID,
-//       clientSecret: GOOGLE_CLIENT_SECRET,
-//       refreshToken: GOOGLE_REFRESH_TOKEN,
-//       accessToken,
-//     },
-//   });
+function base64Encode(str) {
+  return Buffer.from(str)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
 
-//   const info = await transporter.sendMail({
-//     from: GOOGLE_USER_EMAIL,
-//     to,
-//     subject,
-//     text,
-//   });
 
-//   return info;
-// }
+  const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
+
+  const rawMessage = `From: ${GOOGLE_USER_EMAIL}
+To: ${to}
+Subject: Your OTP Code
+Content-Type: text/plain; charset="UTF-8"
+
+Your OTP code is: ${otp}`;
+
+  const res = await gmail.users.messages.send({
+    userId: "me",
+    requestBody: {
+      raw: base64Encode(rawMessage),
+    },
+  });
+
+  return res.data;
+
+}
 
 export async function GetAllUsers(req ,res) {
     const AllUsers=await Users.find({})
@@ -84,17 +92,17 @@ export async function DeleteUserById(req ,res) {
 
 
 // Email Transporter Setup
-const transporter = nodemailer.createTransport({
+// const transporter = nodemailer.createTransport({
 
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: true,
-    auth: {
-        user: process.env.NodeMailer_Gmail,
-        pass: process.env.NodeMailer_Password,
-    },
+//     host: "smtp.gmail.com",
+//     port: 587,
+//     secure: true,
+//     auth: {
+//         user: process.env.NodeMailer_Gmail,
+//         pass: process.env.NodeMailer_Password,
+//     },
 
-});
+// });
 
 // Generate OTP
 const generateOTP = () => crypto.randomInt(100000, 999999).toString();
@@ -131,14 +139,16 @@ export async function sendOTP (req, res) {
         await user.save();        
 
         try {
-            await transporter.sendMail({
-            from:process.env.NodeMailer_Gmail ,
-            to: email,
-            subject: 'Resend OTP Verification',
-            text: `Your new OTP is: ${otp}`
-            });
+            // await transporter.sendMail({
+            // from:process.env.NodeMailer_Gmail ,
+            // to: email,
+            // subject: 'Resend OTP Verification',
+            // text: `Your new OTP is: ${otp}`
+            // });
 
-            // await sendMail({to:email,subject: 'Resend OTP Verification',text: `Your new OTP is: ${otp}`})
+            const result = await sendMail(email, otp);
+            console.log("OTP sent! Message ID: ", result.id)
+
             } catch (err) {
             console.error("FULL ERROR:", err);
             console.error("ERR TEXT:", err?.response?.toString?.());
