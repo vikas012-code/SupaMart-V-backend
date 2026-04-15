@@ -7,8 +7,8 @@ import userRoutes from "./routes/user.route.js"
 import productRoutes from "./routes/product.route.js"
 import wishlistsRoutes from "./routes/wishlist.route.js"
 import orderRoutes from "./routes/order.route.js"
-import dns from 'node:dns';
-dns.setServers(['8.8.8.8', '8.8.4.4']);
+// import dns from 'node:dns';
+// dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app = express();
 
