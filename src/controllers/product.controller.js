@@ -3,47 +3,71 @@ import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs/promises"
 import path from "path";
 
-export async function AllProductList(req,res) {
-    const data = await Products.find({})
-    res.json(data)
+export async function AllProductList(req, res) {
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, parseInt(req.query.limit) || 20);
+    const category = req.query.category?.trim();
+    const search = req.query.search?.trim();
+
+    const filter = {};
+    if (category) filter.category = { $regex: category, $options: "i" };
+    if (search) filter.title = { $regex: search, $options: "i" };
+
+    const [data, total] = await Promise.all([
+      Products.find(filter).skip((page - 1) * limit).limit(limit).lean(),
+      Products.countDocuments(filter),
+    ]);
+
+    res.json({
+      data,
+      page,
+      limit,
+      total,
+      hasMore: page * limit < total,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
 }
 
-export async function AddProduct(req ,res) {
+export async function AddProduct(req, res) {
   const req_Data = req.body;
 
   const data = new Products(req_Data);
-  
-  try{
+
+  try {
     const result = await data.save();
     console.log(data)
     res.status(200).send(data);
   }
-  catch(err){
+  catch (err) {
     console.log(err)
     res.status(500).json(err);
   }
 }
 
-export async function GetProductById(req ,res) {
-  const _id= req.params.id;
+export async function GetProductById(req, res) {
+  const _id = req.params.id;
   try {
-    const productDetail=await Products.findById(_id)
+    const productDetail = await Products.findById(_id)
     res.status(200).json(productDetail)
   } catch (error) {
     res.status(500).json(error)
   }
-  
+
 }
 
-export async function UpdateQuantityByOrder(req ,res) {
-  const {_id,quantity}= req.body;
+export async function UpdateQuantityByOrder(req, res) {
+  const { _id, quantity } = req.body;
   try {
     const result = await Products.findByIdAndUpdate(
       _id,
       { $inc: { quantity: -quantity } },
       { new: true }
     );
-    
+
     res.json(result)
   } catch (err) {
     console.error('Error ', err);
@@ -51,15 +75,15 @@ export async function UpdateQuantityByOrder(req ,res) {
 }
 
 
-export async function UpdateQuantityByAdding(req ,res) {
-  const {_id,quantity}= req.body;
+export async function UpdateQuantityByAdding(req, res) {
+  const { _id, quantity } = req.body;
   try {
     const result = await Products.findByIdAndUpdate(
       _id,
       { $inc: { quantity: +quantity } },
       { new: true }
     );
-   
+
     res.json(result)
   } catch (err) {
     console.error('Error ', err);
@@ -68,44 +92,44 @@ export async function UpdateQuantityByAdding(req ,res) {
 
 const __dirname = import.meta.dirname;
 
-export async function UploadImage (req , res){
+export async function UploadImage(req, res) {
   //Configuration
-    cloudinary.config({ 
-        cloud_name: process.env.cloud_name, 
-        api_key: process.env.api_key, 
-        api_secret: process.env.api_secret
-    });
+  cloudinary.config({
+    cloud_name: process.env.cloud_name,
+    api_key: process.env.api_key,
+    api_secret: process.env.api_secret
+  });
 
-    // console.log(req,req.body,req.files)
-    
-    // Upload an image
-    try{
-      //console.log(req.files.files)
-      const file=req.files.files
-      const uploadResult = await cloudinary.uploader.upload(file.tempFilePath ,(err,result)=>{
-        console.log(result)
-        
-      })
-      res.status(200).json(uploadResult.url);
-      fs.rm(path.join(__dirname,"../","tmp"),{recursive:true},(err)=>{
-        if(err){
-          console.log(err)
-        }
-        else{
-          console.log("temperory file removed")
-        }
-      })
-    }
-   catch (error) {
-      console.error(error);
-      res.status(400).json(error,req);
-      fs.rm(path.join(__dirname,"../","tmp"),{recursive:true},(err)=>{
-        if(err){
-          console.log(err)
-        }
-        else{
-          console.log("temperory file removed")
-        }
-      })
-    }
+  // console.log(req,req.body,req.files)
+
+  // Upload an image
+  try {
+    //console.log(req.files.files)
+    const file = req.files.files
+    const uploadResult = await cloudinary.uploader.upload(file.tempFilePath, (err, result) => {
+      console.log(result)
+
+    })
+    res.status(200).json(uploadResult.url);
+    fs.rm(path.join(__dirname, "../", "tmp"), { recursive: true }, (err) => {
+      if (err) {
+        console.log(err)
+      }
+      else {
+        console.log("temperory file removed")
+      }
+    })
+  }
+  catch (error) {
+    console.error(error);
+    res.status(400).json(error, req);
+    fs.rm(path.join(__dirname, "../", "tmp"), { recursive: true }, (err) => {
+      if (err) {
+        console.log(err)
+      }
+      else {
+        console.log("temperory file removed")
+      }
+    })
+  }
 }

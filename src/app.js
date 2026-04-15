@@ -13,6 +13,10 @@ dns.setServers(['8.8.8.8', '8.8.4.4']);
 const app = express();
 
 // Middleware
+app.use((req,res,next)=>{
+  console.log('\x1b[33m', `${req.method}`,'\x1b[32m',`${req.url}`,'\x1b[0m');
+  next()
+})
 app.use(cors())
 app.use(express.json())
 app.use(fileUpload({
