@@ -1,12 +1,12 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "src/server.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --env-file=.env src/server.js",
-    "dev": "nodemon --env-file=.env src/server.js"
+    "start": "src/index.js",
+    "dev": "nodemon --env-file=.env src/index.js"
   },
   "keywords": [],
   "author": "",
