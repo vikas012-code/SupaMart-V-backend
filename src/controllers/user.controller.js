@@ -1,6 +1,4 @@
 import Users from "../models/users.model.js";
-
-import nodemailer from 'nodemailer';
 import crypto from 'node:crypto';
 import { google } from "googleapis";
 
@@ -49,8 +47,8 @@ Your OTP code is: ${otp}`;
 }
 
 export async function GetAllUsers(req ,res) {
-    const AllUsers=await Users.find({})
-    res.json(AllUsers)
+    const AllUsers=await Users.find({}).lean();
+    res.status(200).json(AllUsers)
 }
 
 export async function GetUsersById(req ,res) {
